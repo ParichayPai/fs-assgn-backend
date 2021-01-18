@@ -52,7 +52,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin:"https://parichay-fs-client.herokuapp.com",  //"http://localhost:3000", // <-- location of the react app were connecting to
+    origin:"https://fs-client-parichay.herokuapp.com",  //"http://localhost:3000", // <-- location of the react app were connecting to
     credentials: true,
   })
 );
