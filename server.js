@@ -25,27 +25,51 @@ mongoose.connect( process.env.MONGODB_URI ||url, {useNewUrlParser: true, useUnif
     .then(r => console.log("server started"))
     .catch(err => console.log("couldn't connect ", err));
 
-
+///////////////////////////////////////////Old /////////////////////////////////////////////////
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(
+//     cors({
+//             origin: "http://localhost:3000",        //"https://klenty-front.herokuapp.com", //["https://klenty-front.herokuapp.com/","http://localhost:3000"],
+//             credentials: true,
+//     })
+// );
+// app.use(
+//     session({
+//             secret: "secretcode",
+//             resave: true,
+//             saveUninitialized: true,
+//     })
+// );
+// // app.use(cookieParser("secretcode"));
+// // app.use(session({ secret: 'secretcode' }));
+// app.use(passport.initialize());
+// app.use(passport.session());
+// require("./config/passportSetup")(passport);
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+// New
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
-    cors({
-            origin: "https://klenty-front.herokuapp.com", //["https://klenty-front.herokuapp.com/","http://localhost:3000"],
-            credentials: true,
-    })
+  cors({
+    origin: "http://localhost:3000", // <-- location of the react app were connecting to
+    credentials: true,
+  })
 );
 app.use(
-    session({
-            secret: "secretcode",
-            resave: true,
-            saveUninitialized: true,
-            cookie: { secure: true }
-    })
+  session({
+    secret: "secretcode",
+    resave: true,
+    saveUninitialized: true,
+  })
 );
 app.use(cookieParser("secretcode"));
-require("./config/passportSetup")(passport);
 app.use(passport.initialize());
 app.use(passport.session());
+require("./config/passportSetup")(passport);
+///////////////////
+
+
 
 require("./routes")(app);
 

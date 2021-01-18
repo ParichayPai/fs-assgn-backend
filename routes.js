@@ -13,29 +13,43 @@ mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true, useFindA
     .catch(err => console.log("couldn't connect ", err));
 module.exports = (app) => {
 
-    app.post("/api/v1/login",
-        (req, res, next) => {
-            passport.authenticate("local", (err, user, next) => {
-                if (err) {
-                    throw err;
-                }
-                if (!user) {
-                    res.send("No User Exists");
-                }
-                else {
-                    req.login(user, (err) => {
-                        if (err){
-                            console.log(err);
-                        } else {
-                            res.send("Successfully Authenticated");
-                            console.log(req.user);
-                        }
-                    });
-                }
-            })(req, res, next);
-        }
-
-    );
+    // app.post("/api/v1/login",
+    //     (req, res, next) => {
+    //         passport.authenticate("local", (err, user, next) => {
+    //             if (err) {
+    //                 throw err;
+    //             }
+    //             if (!user) {
+    //                 res.send("No User Exists");
+    //             }
+    //             else {
+    //                 req.login(user, (err) => {
+    //                     if (err){
+    //                         console.log(err);
+    //                     } else {
+    //                         // res.send("Successfully Authenticated");
+    //                         console.log(req.user);
+    //                     }
+    //                 });
+    //             }
+    //         })(req, res, next);
+    //     }
+    // );
+    app.post('/api/v1/login', function(req, res, next) {
+        passport.authenticate('local', function(err, user, info) {
+          if (err) 
+            return next(err); 
+          if (!user) 
+            return res.status(404).send("No User Exists");
+          else{
+            req.logIn(user, (err) => {
+                if (err) throw err;
+                res.send("Successfully Authenticated");
+                // console.log(req.user);
+              });
+          }
+        })(req, res, next);
+      });
 
     app.post("/api/v1/register", (req, res) => {
         User.findOne({ username: req.body.username }, async (err, doc) => {
@@ -54,13 +68,17 @@ module.exports = (app) => {
         });
     });
     app.get("/api/v1/user", (req, res) => {
-        console.log("getting user");
         res.send(req.user);
     });
-    app.get('/api/v1/logout', function(req, res){
-        req.logout();
-        res.redirect('/');
+    app.get('/api/v1/logout', function (req, res){
+        req.session.destroy();
     });
+    // app.get('/api/v1/logout', function(req, res){
+    //     console.log('logout')
+    //     console.log(res.data);
+    //     req.logOut();
+    //     // res.redirect('/');
+    // });
 ////////////////////Passport Shit Done///////////////////////////////////
 
     app.get('/api/v1/posts', (req, res) => {
@@ -90,7 +108,7 @@ module.exports = (app) => {
             postId: req.body.postId,
             username: req.body.userName,
             description: req.body.commentData,
-            timeStamp: new Date()
+            timeStamp: new Date().toLocaleString()
         });
         IncomingComment.save().then(data => {
             console.log("comment posted");
